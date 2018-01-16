@@ -83,5 +83,9 @@ class KNNClassifier(object):
 
         return votes.most_common(1)[0][0]
 
+    def score(self, X_test, y_test):
+        y_predict = self.predict(X_test)
+        return sum(y_predict == y_test) / len(y_test)
+
     def __repr__(self):
         return 'kNN(k=%d)'%self.k
