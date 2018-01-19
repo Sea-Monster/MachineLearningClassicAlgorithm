@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
+from playML.metrics import r2_score
 
 class SimpleLinearRegression1(object):
     """
@@ -90,5 +90,19 @@ class SimpleLinearRegression2(object):
     def _predict(self, x_single):
         return self.a_ * x_single + self.b_
 
+    def score(self, x_test, y_test):
+        """
+        根据测试数据集x_test和y_test 确定当前模型的准确度
+        :param x_test:
+        :param y_test:
+        :return:
+        """
+        y_predict = self.predict(x_test)
+        return r2_score(y_test, y_predict)
+
     def __repr__(self):
         return 'SimpleLinearRegression2()'
+
+
+class SimpleLinearRegression(SimpleLinearRegression2):
+    pass
