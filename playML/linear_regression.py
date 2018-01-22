@@ -38,11 +38,15 @@ class LinearRegression(linear_regression.LinearRegression):
             :param y:
             :return:
             """
-            res = np.empty(len(theta))
-            res[0] = np.sum(X_b.dot(theta) - y)
-            for i in range(1, len(theta)):
-                res[i] = (X_b.dot(theta) - y).dot(X_b[:, i])
-            return res * 2 / len(X_b)
+
+            # res = np.empty(len(theta))
+            # res[0] = np.sum(X_b.dot(theta) - y)
+            # for i in range(1, len(theta)):
+            #     res[i] = (X_b.dot(theta) - y).dot(X_b[:, i])
+            # return res * 2 / len(X_b)
+
+            # 改为向量的形式
+            return X_b.T.dot(X_b.dot(theta) - y) * 2. / len(X_b)
 
         def gradient_descent(X_b, y, initial_theta, eta, n_iters=1e4, epsilon=1e-8):
             theta = initial_theta
