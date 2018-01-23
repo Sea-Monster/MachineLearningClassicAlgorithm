@@ -68,3 +68,41 @@ class LinearRegression(linear_regression.LinearRegression):
         self.coef_ = self._theta[1:]
 
         return self
+
+    def fit_sgd(self, X_train, y_train, n_iters=1e4, t0=5, t1=50):
+        """
+        使用随机梯度下降法进行拟合
+        :param X_train:
+        :param y_train:
+        :param n_iters:
+        :param t0:
+        :param t1:
+        :return:
+        """
+        assert X_train.shape[0] == y_train.shape[0], '每一个训练样本必须对应一个标记'
+
+        def derivative_J_sgd(theta: np.ndarray, X_b_i: np.ndarray, y_i):
+            """
+            求随机搜索方向
+            """
+            return X_b_i.T.dot(X_b_i.dot(theta) - y_i) * 2.
+
+        def sgd(X_b, y, initial_theta, n_iters, t0=5, t1=50):
+            """"""
+            def learning_rate(t):
+                return t0 / (t + t1)
+
+            theta = initial_theta
+            for cur_iter in range(n_iters):
+                # 随机选一个
+                rand_i = np.random.randint(len(X_b))
+                gradient = derivative_J_sgd(theta, X_b[rand_i], y[rand_i])
+                # 向搜索方向的相反方向移动η
+                theta = theta - learning_rate(cur_iter) * gradient
+            return theta
+
+        X_b = np.hstack((np.ones((len(X_train), 1)), X_train))
+        initial_theta = np.zeros(X_b.shape[1])
+        self._theta = sgd(X_b, y_train, initial_theta, n_iters=n_iters, t0=t0, t1=t1)
+        self.interception_ = self._theta[0]
+        self.coef_ = self._theta[1:]
