@@ -48,7 +48,7 @@ class LinearRegression(linear_regression.LinearRegression):
             # 改为向量的形式
             return X_b.T.dot(X_b.dot(theta) - y) * 2. / len(X_b)
 
-        def gradient_descent(X_b, y, initial_theta, eta, n_iters=1e4, epsilon=1e-8):
+        def gradient_descent(X_b, y, initial_theta, eta, n_iters=5, epsilon=1e-8):
             theta = initial_theta
             iters = 0
             while iters < n_iters:
@@ -80,6 +80,7 @@ class LinearRegression(linear_regression.LinearRegression):
         :return:
         """
         assert X_train.shape[0] == y_train.shape[0], '每一个训练样本必须对应一个标记'
+        assert n_iters >=1 , '所有训练样本至少要被随机一次'
 
         def derivative_J_sgd(theta: np.ndarray, X_b_i: np.ndarray, y_i):
             """
@@ -93,12 +94,15 @@ class LinearRegression(linear_regression.LinearRegression):
                 return t0 / (t + t1)
 
             theta = initial_theta
+            m = len(X_b)    # 样本数目
             for cur_iter in range(n_iters):
-                # 随机选一个
-                rand_i = np.random.randint(len(X_b))
-                gradient = derivative_J_sgd(theta, X_b[rand_i], y[rand_i])
-                # 向搜索方向的相反方向移动η
-                theta = theta - learning_rate(cur_iter) * gradient
+                indexes = np.random.permutation(m)
+                X_b_new = X_b[indexes]
+                y_new = y[indexes]
+                for i in range(m):
+                    gradient = derivative_J_sgd(theta, X_b_new[i], y_new[i])
+                    # 向搜索方向的相反方向移动η
+                    theta = theta - learning_rate(cur_iter * m + i) * gradient
             return theta
 
         X_b = np.hstack((np.ones((len(X_train), 1)), X_train))
